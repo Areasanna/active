@@ -23,9 +23,9 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
-   // @Enumerated(EnumType.STRING)
-   // private TrainingLevel trainingLevel;
-   // private LocalDateTime createdAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private TrainingLevel trainingLevel;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private Integer idade;
