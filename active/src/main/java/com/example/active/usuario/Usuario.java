@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "users")
 public class Usuario {
     // nome, email, peso, idade, nivel, altura, tempo de treino
     @Id
@@ -15,7 +15,7 @@ public class Usuario {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String nome;
 
     @Column(nullable = false)
     private String email;
@@ -25,6 +25,7 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private TrainingLevel trainingLevel;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
@@ -36,10 +37,30 @@ public class Usuario {
     private BigDecimal peso;
 
     @Column(nullable = false, precision = 3, scale = 2)
-    private Double altura;
+    private BigDecimal altura;
+
+    public Usuario(){
+
+    }
 
     public Usuario(String name, String email, String password,
-                   Integer idade, BigDecimal peso, Double altura) {
+                   Integer idade, BigDecimal peso, BigDecimal altura, TrainingLevel trainingLevel) {
+
+        this.nome = name;
+        this.email = email;
+        this.password = password;
+        this.idade = idade;
+        this.peso = peso;
+        this.altura = altura;
+        this.trainingLevel = trainingLevel;
+    }
+
+    public TrainingLevel getTrainingLevel() {
+        return trainingLevel;
+    }
+
+    public void setTrainingLevel(TrainingLevel trainingLevel) {
+        this.trainingLevel = trainingLevel;
     }
 
     public Long getId() {
@@ -50,12 +71,12 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getEmail() {
@@ -90,12 +111,20 @@ public class Usuario {
         this.peso = peso;
     }
 
-    public Double getAltura() {
+    public BigDecimal getAltura() {
         return altura;
     }
 
-    public void setAltura(Double altura) {
+    public void setAltura(BigDecimal altura) {
         this.altura = altura;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
 

@@ -1,13 +1,11 @@
 package com.example.active.usuario;
 
-import com.example.active.usuario.dto.UsuarioRequest;
-import com.example.active.usuario.dto.UsuarioResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @org.springframework.stereotype.Service
-public class Service {
+public class UsuarioService {
 
     @Autowired
     private UsuarioRepository repository;
@@ -21,7 +19,7 @@ public class Service {
             throw new RuntimeException("E-mail já cadastrado");
         }
         Usuario usuario = new Usuario();
-        usuario.setName(request.getNome());
+        usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
         usuario.setAltura(request.getAltura());
         usuario.setIdade(request.getIdade());
@@ -34,10 +32,10 @@ public class Service {
 
         return new UsuarioResponse(
                 usuario.getId(),
-                usuario.getName(),
+                usuario.getNome(),
                 usuario.getEmail(),
                 usuario.getTrainingLevel(),
-                usuario.getCreatedAt()
+                null
         );
     }
 }

@@ -1,6 +1,5 @@
-package com.example.active.usuario.dto;
+package com.example.active.usuario;
 
-import com.example.active.usuario.TrainingLevel;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
@@ -32,10 +31,10 @@ public class UsuarioRequest{
     private BigDecimal peso;
 
     @NotNull(message = "A altura é obrigatória")
-    private Double altura;
+    private BigDecimal altura;
 
     public UsuarioRequest(String nome, String email, String password, TrainingLevel trainingLevel, Integer idade, BigDecimal peso,
-                          Double altura) {
+                          BigDecimal altura) {
         this.nome = nome;
         this.email = email;
         this.password = password;
@@ -93,11 +92,12 @@ public class UsuarioRequest{
         this.peso = peso;
     }
 
-    public Double getAltura() {
+    public BigDecimal getAltura() {
         return altura;
     }
 
-    public void setAltura(Double altura) {
+    public void setAltura(BigDecimal altura) {
+
         this.altura = altura;
     }
 }
