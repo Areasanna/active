@@ -2,6 +2,7 @@ package com.example.active.usuario;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,7 +27,9 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private TrainingLevel trainingLevel;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private Integer idade;

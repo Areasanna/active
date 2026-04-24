@@ -27,15 +27,15 @@ public class UsuarioService {
         usuario.setTrainingLevel(request.getTrainingLevel());
 
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
-
         usuario = repository.save(usuario);
+        repository.flush();
 
         return new UsuarioResponse(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
                 usuario.getTrainingLevel(),
-                null
+                usuario.getCreatedAt()
         );
     }
 }
