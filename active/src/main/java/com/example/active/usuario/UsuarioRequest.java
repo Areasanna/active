@@ -31,6 +31,7 @@ public class UsuarioRequest{
     private BigDecimal peso;
 
     @NotNull(message = "A altura é obrigatória")
+    @Positive(message = "A altura deve ser maior que zero")
     private BigDecimal altura;
 
     public UsuarioRequest(String nome, String email, String password, TrainingLevel trainingLevel, Integer idade, BigDecimal peso,
