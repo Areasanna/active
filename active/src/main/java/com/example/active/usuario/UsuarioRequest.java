@@ -28,6 +28,7 @@ public class UsuarioRequest{
 
     @NotNull(message = "O peso é obrigatório")
     @Digits(integer = 3, fraction = 2)
+    @DecimalMin(value = "1.0", message = "Peso deve ser maior que zero")
     private BigDecimal peso;
 
     @NotNull(message = "A altura é obrigatória")
