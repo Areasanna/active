@@ -15,8 +15,11 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponse cadastrar(UsuarioRequest request){
-        if(repository.existsByEmail(request.getEmail())){
+        if(repository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("E-mail já cadastrado");
+        }
+        if (!request.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\\\d).{8,}$")) {
+                throw new RuntimeException("Senha deve conter letras e números e no mínimo 8 caracters");
         }
         Usuario usuario = new Usuario();
         usuario.setNome(request.getNome());
