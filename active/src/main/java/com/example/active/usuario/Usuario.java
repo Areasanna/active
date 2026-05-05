@@ -18,7 +18,7 @@ public class Usuario {
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -40,16 +40,17 @@ public class Usuario {
     private BigDecimal peso;
 
     @Column(nullable = false, precision = 3, scale = 2)
+    @Positive(message = "A altura deve ser maior que zero")
     private BigDecimal altura;
 
     public Usuario(){
 
     }
 
-    public Usuario(String name, String email, String password,
+    public Usuario(String nome, String email, String password,
                    Integer idade, BigDecimal peso, BigDecimal altura, TrainingLevel trainingLevel) {
 
-        this.nome = name;
+        this.nome = nome;
         this.email = email;
         this.password = password;
         this.idade = idade;

@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     //Erros de validação  - HTTP 400
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<StandardError> ValitacaoErro(MethodArgumentNotValidException ex){
+    public ResponseEntity<StandardError> ValidacaoErro(MethodArgumentNotValidException ex){
       //junção de todos os erros de campo em uma única mensagem
         String mensagem = ex.getBindingResult().getFieldErrors().stream()
                 .map(e -> e.getField() + ": " + e.getDefaultMessage())
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     //Erro Genérico (Fallback) - 500
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<StandardError> ErooGenerico(Exception ex){
+    public ResponseEntity<StandardError> ErroGenerico(Exception ex){
         StandardError erro = new StandardError(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 " Erro interno inesperado no servidor.",
