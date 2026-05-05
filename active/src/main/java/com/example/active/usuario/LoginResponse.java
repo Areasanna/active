@@ -1,6 +1,6 @@
 package com.example.active.usuario;
 
-public record LoguinResponse(
+public record LoginResponse(
         String token,
         String tokenType) {
 }
