@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Desabilita para APIs REST
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**", "/com/example/active/auth/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**", "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll() // Cadastro é aberto
                         .anyRequest().authenticated() // Todo o resto precisa de login
                 );
