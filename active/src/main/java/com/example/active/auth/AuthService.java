@@ -27,7 +27,7 @@ public class AuthService {
 
     private final long jwtExpirationMs = 86400000; // 1 dia
 
-    public LoginResponse loguin(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         Usuario usuario = usuarioRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BadCredentialsException("Credenciais inválidas"));
         if (!passwordEncoder().matches(request.password(), usuario.getPassword())) {
