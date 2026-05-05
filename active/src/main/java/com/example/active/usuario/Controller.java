@@ -22,7 +22,7 @@ public class Controller {
 
     @PostMapping
     public ResponseEntity<UsuarioResponse> create (@Valid @RequestBody UsuarioRequest request){
-        logger.info("Pos/usuario - Indentificador: {}", request.getEmail());
+        logger.info("Post/usuario - Indentificador: {}", request.getEmail());
         UsuarioResponse response = service.cadastrar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
