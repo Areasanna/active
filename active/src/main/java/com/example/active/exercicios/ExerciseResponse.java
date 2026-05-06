@@ -1,5 +1,8 @@
 package com.example.active.exercicios;
 
+import com.example.active.equipment.EquipmentResponse;
+import com.example.active.muscle.MuscleResponse;
+
 import java.util.List;
 
 public record ExerciseResponse(
@@ -7,8 +10,8 @@ public record ExerciseResponse(
         String title,
         String videoUrl,
         String description,
-        Category category,
-        List<String> equipmentNames,
-        List<String> musculoPrimario,
-        List<String>musculoSecundario
-) {}
+        ExerciseCategory category,
+        List<EquipmentResponse> equipment,
+        List<MuscleResponse> primaryMuscle,
+        List<MuscleResponse> secondaryMuscle) {
+}
