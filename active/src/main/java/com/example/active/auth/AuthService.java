@@ -7,10 +7,10 @@ import com.example.active.usuario.UsuarioRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ import java.util.Date;
 public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -30,7 +31,7 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         Usuario usuario = usuarioRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BadCredentialsException("Credenciais inválidas"));
-        if (!passwordEncoder().matches(request.password(), usuario.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
             throw new BadCredentialsException("Credenciais inválidas");
         }
 
@@ -43,10 +44,5 @@ public class AuthService {
                 .compact();
         return new LoginResponse(token, "Bearer");
 
-    }
-
-
-    private PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
