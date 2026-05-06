@@ -1,21 +1,27 @@
 package com.example.active.exercicios;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-
-import javax.swing.*;
 import java.util.List;
 
-public record ExerciseRequest(
+public record ExerciseCreateRequest(
         @NotBlank
         String title,
+
         @NotBlank
         String description,
+
         String videoUrl,
+
         @NotNull
-        Category category,
+        ExerciseCategory category,
+
+        @NotEmpty
         List<Long>equipmentIds,
-        List<Long>musculoPrimario,
-        List<Long>musculoSegundario
-){}
+
+        @NotEmpty
+        List<Long>primaryMuscleIds,
+        List<Long>secondaryMuscleIds){
+}
 
