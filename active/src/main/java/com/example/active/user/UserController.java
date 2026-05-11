@@ -1,51 +1,59 @@
-package com.example.active.usuario;
+package com.example.active.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
-public class Controller {
+public class UserController {
      //registra o que está acontecendo
-     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private UsuarioService service;
+    private UserService userservice;
 
     @PostMapping
-    public ResponseEntity<UsuarioResponse> create (@Valid @RequestBody UsuarioRequest request){
+    public ResponseEntity<UserResponse> create (@Valid @RequestBody UserRequest request){
         logger.info("Post/usuario - Indentificador: {}", request.getEmail());
-        UsuarioResponse response = service.cadastrar(request);
+        UserResponse response = userservice.cadastrar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    @GetMapping
+    public ResponseEntity<Page<UserResponse>> list(Pageable pageable) {
+        logger.info("Get/usuarios - Paginação: {}", pageable);
+        Page<UserResponse> response = userservice.list(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         logger.info("Get/usuario - Identificador: {}", id);
-        UsuarioResponse response = service.buscarporId(id);
+        UserResponse response = userservice.buscarporId(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> deleteById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> deleteById(@PathVariable Long id) {
         logger.info("Delete/usuario - Identificador: {}", +id);
         try {
-            service.deletarPorId(id);
+            userservice.deletarPorId(id);
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> updateById(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
+    public ResponseEntity<UserResponse> updateById(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
         logger.info("Put/usuario - Identificador: {}, id");
-        UsuarioResponse response = service.atualizarPorId(id, request);
+        UserResponse response = userservice.atualizarPorId(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
