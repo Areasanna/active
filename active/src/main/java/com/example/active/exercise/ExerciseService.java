@@ -104,9 +104,9 @@ public class ExerciseService {
                 e.getEquipment().stream()
                         .map(eq -> new EquipmentResponse(eq.getId(), eq.getName())).toList(),
                 e.getPrimaryMuscles().stream()
-                        .map(m -> new MuscleResponse(m.getId(), m.getName())).toList(),
+                        .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList(),
                 e.getSecondaryMuscles().stream()
-                        .map(m -> new MuscleResponse(m.getId(), m.getName())).toList()
+                        .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList()
         );
     }
 }
