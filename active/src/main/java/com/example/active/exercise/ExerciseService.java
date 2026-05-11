@@ -1,10 +1,12 @@
-package com.example.active.exercicios;
+package com.example.active.exercise;
 
 import com.example.active.equipment.EquipmentRepository;
 import com.example.active.equipment.EquipmentResponse;
 import com.example.active.muscle.MuscleRepository;
 import com.example.active.muscle.MuscleResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,18 +48,13 @@ public class ExerciseService {
         exerciseRepository.deleteById(id);
     }
 
-    public List<ExerciseResponse> list(String category, Long equipmentId, Long muscleId) {
+    public Page<ExerciseResponse> list(ExerciseCategory category, Long equipmentId, Long muscleId, Pageable pageable) {
 
-        var exercises = exerciseRepository.findAll();
+        var spec = ExerciseSpecs.filterExercises(category, equipmentId, muscleId);
 
-        return exercises.stream()
-                .filter(e -> category == null || e.getCategory().name().equalsIgnoreCase(category))
-                .filter(e -> equipmentId == null || e.getEquipment().stream().anyMatch(eq -> eq.getId().equals(equipmentId)))
-                .filter(e -> muscleId == null ||
-                        e.getPrimaryMuscles().stream().anyMatch(m -> m.getId().equals(muscleId)) ||
-                        e.getSecondaryMuscles().stream().anyMatch(m -> m.getId().equals(muscleId)))
-                .map(this::toResponse)
-                .toList();
+        Page<Exercise> exercisesPage = exerciseRepository.findAll(spec, pageable);
+
+        return exercisesPage.map(this::toResponse);
     }
 
     public ExerciseResponse findById(Long id) {
@@ -66,12 +63,12 @@ public class ExerciseService {
         return toResponse(e);
     }
 
-
+    //Verifica se a categoria enviada pelo usuario é nula.
     private void validateCategory(ExerciseCategory category) {
         if (category == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria inválida");
     }
-
+    //transforma os dados brutos que vêm da API em objetos reais do banco de dados.
     private void populateExerciseFromDto(
             Exercise exercise, String title, String desc, String videoUrl,
             ExerciseCategory category, List<Long> equipmentIds,
@@ -83,7 +80,7 @@ public class ExerciseService {
         exercise.setTitle(title);
         exercise.setDescription(desc);
         exercise.setVideoUrl(videoUrl);
-        exercise.setCategory(category); // Corrigido aqui
+        exercise.setCategory(category);
 
         exercise.setEquipment(new HashSet<>(equipmentRepository.findAllById(equipmentIds)));
         exercise.setPrimaryMuscles(new HashSet<>(muscleRepository.findAllById(primaryMuscleIds)));
@@ -96,7 +93,7 @@ public class ExerciseService {
         if (exercise.getEquipment().isEmpty() || exercise.getPrimaryMuscles().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deve possuir ao menos um equipamento e músculo primário");
     }
-
+    //faz o mapeamento Entidade para DTO
     private ExerciseResponse toResponse(Exercise e) {
         return new ExerciseResponse(
                 e.getId(),
@@ -107,9 +104,9 @@ public class ExerciseService {
                 e.getEquipment().stream()
                         .map(eq -> new EquipmentResponse(eq.getId(), eq.getName())).toList(),
                 e.getPrimaryMuscles().stream()
-                        .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList(),
+                        .map(m -> new MuscleResponse(m.getId(), m.getName())).toList(),
                 e.getSecondaryMuscles().stream()
-                        .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList()
+                        .map(m -> new MuscleResponse(m.getId(), m.getName())).toList()
         );
     }
 }
