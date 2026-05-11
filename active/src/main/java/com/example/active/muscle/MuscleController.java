@@ -1,12 +1,12 @@
 package com.example.active.muscle;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/muscles")
@@ -15,8 +15,13 @@ public class MuscleController {
     private final MuscleService service;
 
     @GetMapping
-    public ResponseEntity<List<MuscleResponse>> list() {
-        return ResponseEntity.ok(service.list());
+    public ResponseEntity<Page<MuscleResponse>> list(Pageable pageable) {
+        return ResponseEntity.ok(service.list(pageable));
+    }
+
+    @PostMapping
+    public ResponseEntity<MuscleResponse> create(@RequestBody @Valid MuscleRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 }
 
