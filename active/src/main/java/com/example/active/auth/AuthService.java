@@ -1,13 +1,12 @@
 package com.example.active.auth;
 
-import com.example.active.usuario.LoginRequest;
-import com.example.active.usuario.LoginResponse;
-import com.example.active.usuario.Usuario;
-import com.example.active.usuario.UsuarioRepository;
+import com.example.active.user.LoginRequest;
+import com.example.active.user.LoginResponse;
+import com.example.active.user.User;
+import com.example.active.user.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +18,7 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,15 +28,15 @@ public class AuthService {
     private final long jwtExpirationMs = 86400000; // 1 dia
 
     public LoginResponse login(LoginRequest request) {
-        Usuario usuario = usuarioRepository.findByEmail(request.email())
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BadCredentialsException("Credenciais inválidas"));
-        if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BadCredentialsException("Credenciais inválidas");
         }
 
         String token = Jwts.builder()
-                .setSubject(usuario.getEmail())
-                .claim("usuarioId", usuario.getId())
+                .setSubject(user.getEmail())
+                .claim("usuarioId", user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
