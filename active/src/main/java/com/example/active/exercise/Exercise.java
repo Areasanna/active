@@ -1,4 +1,4 @@
-package com.example.active.exercicios;
+package com.example.active.exercise;
 
 import com.example.active.equipment.Equipment;
 import com.example.active.muscle.Muscle;
@@ -41,12 +41,12 @@ public class Exercise {
     @ManyToMany
     @JoinTable(name = "exercise_primary_muscles",
             joinColumns = @JoinColumn(name = "exercise_id"),
-            inverseJoinColumns = @JoinColumn(name = "musculo_id"))
+            inverseJoinColumns = @JoinColumn(name = "muscle_id"))
     private Set<Muscle> primaryMuscles = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "exercise_secondary_muscles",
             joinColumns = @JoinColumn(name = "exercise_id"),
-            inverseJoinColumns = @JoinColumn(name = "musculo_id"))
+            inverseJoinColumns = @JoinColumn(name = "muscle_id"))
     private Set<Muscle> secondaryMuscles = new HashSet<>();
 }
