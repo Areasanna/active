@@ -1,4 +1,4 @@
-package com.example.active.usuario;
+package com.example.active.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
