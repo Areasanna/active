@@ -1,4 +1,4 @@
-package com.example.active.exercicios;
+package com.example.active.exercise;
 
 import com.example.active.equipment.EquipmentResponse;
 import com.example.active.muscle.MuscleResponse;
@@ -12,6 +12,6 @@ public record ExerciseResponse(
         String description,
         ExerciseCategory category,
         List<EquipmentResponse> equipment,
-        List<MuscleResponse> primaryMuscle,
-        List<MuscleResponse> secondaryMuscle) {
+        List<MuscleResponse> primaryMuscles,
+        List<MuscleResponse> secondaryMuscles) {
 }
