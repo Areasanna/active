@@ -1,13 +1,12 @@
 package com.example.active.exercicios;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
-public interface ExerciseRepository extends JpaRepository<Exercicio, Long> {
+public interface ExerciseRepository extends JpaRepository<Exercise, Long>, JpaSpecificationExecutor<Exercise> {
 
-    List<Exercicio> findByCategory(Category category);
+    List<Exercise> findByCategory(ExerciseCategory category);
 
-    List<Exercicio> findByTitleContainingIgnoreCase(String title);
+    List<Exercise> findByTitleContainingIgnoreCase(String title);
 }

@@ -1,7 +1,5 @@
-package com.example.active;
+package com.example.active.exception;
 
-import com.example.active.usuario.EmailCadastrado;
-import com.example.active.usuario.StandardError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

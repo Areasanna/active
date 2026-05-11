@@ -1,4 +1,4 @@
-package com.example.active.usuario;
+package com.example.active.exception;
 
 import java.time.LocalDateTime;
 
