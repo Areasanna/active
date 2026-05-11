@@ -22,8 +22,8 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**", "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users", "/exercises/**").permitAll()// Cadastro é aberto
-                        .requestMatchers(HttpMethod.GET, "/users/**", "/exercises/**", "/muscles", "/equipment").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users", "/exercises/**", "/equipment/**", "/workout-sessions/**", "/training-plans/**").permitAll()// Cadastro é aberto
+                        .requestMatchers(HttpMethod.GET, "/users/**", "/exercises/**", "/muscles", "/equipment", "/workout-sessions/**", "/training-plans/**", "/personal-record/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/users/**", "/exercises/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE,"/users/**", "/exercises/**").permitAll()
                         .anyRequest().authenticated() // Todo o resto precisa de login
