@@ -1,4 +1,4 @@
-package com.example.active.exercicios;
+package com.example.active.exercise;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
