@@ -1,47 +1,41 @@
 package com.example.active.auth;
 
+import com.example.active.config.TokenUtil;
 import com.example.active.user.dto.LoginRequest;
 import com.example.active.user.dto.LoginResponse;
 import com.example.active.user.model.User;
-import com.example.active.user.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
-
-    @Value("${jwt.secret}")
-    private String jwtSecret;
-
-    private final long jwtExpirationMs = 86400000; // 1 dia
+    private final AuthenticationManager authManager;
+    private final TokenUtil tokenUtil;
 
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new BadCredentialsException("Credenciais inválidas"));
-        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new BadCredentialsException("Credenciais inválidas");
-        }
+        // Log de entrada
+        System.out.println(">>> 1. Recebi o email: " + request.email());
 
-        String token = Jwts.builder()
-                .setSubject(user.getEmail())
-                .claim("usuarioId", user.getId())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-        return new LoginResponse(token, "Bearer");
+        // Criamos o objeto de autenticação
+        var loginData = new UsernamePasswordAuthenticationToken(request.email(), request.password());
 
+        // O ponto mais comum de erro (Senha errada ou usuário não existe)
+        System.out.println(">>> 2. Vou pedir para o AuthManager autenticar...");
+        Authentication authentication = authManager.authenticate(loginData);
+
+        // Se chegar aqui, a senha estava correta
+        System.out.println(">>> 3. Autenticado com sucesso! Fazendo o cast...");
+        User user = (User) authentication.getPrincipal();
+
+        // O segundo ponto mais comum de erro (Chave JWT curta demais)
+        System.out.println(">>> 4. Vou gerar o token agora...");
+        String token = tokenUtil.generateToken(user);
+
+        System.out.println(">>> 5. Token gerado com sucesso!");
+        return new LoginResponse(token);
     }
 }
