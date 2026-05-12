@@ -4,10 +4,13 @@ import com.example.active.equipment.dto.EquipmentRequest;
 import com.example.active.equipment.dto.EquipmentResponse;
 import com.example.active.equipment.model.Equipment;
 import com.example.active.equipment.repository.EquipmentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -15,9 +18,15 @@ import org.springframework.stereotype.Service;
 public class EquipmentService {
     private final EquipmentRepository equipmentRepository;
 
-    public Page<EquipmentResponse> list(Pageable pageable) {
-        return equipmentRepository.findAll(pageable)
-                .map(this::toResponse);
+    @Transactional(readOnly = true)
+    public Page<EquipmentResponse> list(Specification<Equipment> spec, Pageable pageable) {
+        Page<Equipment> page = equipmentRepository.findAll(spec, pageable);
+
+        if (page.isEmpty()) {
+            throw new EntityNotFoundException("Nenhum equipamento encontrado para os parâmetros fornecidos.");
+        }
+
+        return page.map(e -> new EquipmentResponse(e.getId(), e.getName()));
     }
 
     private EquipmentResponse toResponse(Equipment e) {
