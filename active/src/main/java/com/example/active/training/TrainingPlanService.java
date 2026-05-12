@@ -1,8 +1,7 @@
 package com.example.active.training;
 
 import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.training.dto.TrainingPlanCreateRequest;
-import com.example.active.training.dto.TrainingPlanCreateResponse;
+import com.example.active.training.dto.*;
 import com.example.active.training.model.*;
 import com.example.active.training.repository.TrainingPlanRepository;
 import com.example.active.user.model.User;
