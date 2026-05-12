@@ -13,8 +13,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,18 +28,22 @@ public class WorkoutSessionService {
     @Transactional
     public WorkoutSessionCreateResponse.WorkoutSessionResponse registerSession(WorkoutSessionCreateRequest.Create req, User user) {
         var trainingDay = trainingPlanDayRepository.findById(req.trainingPlanDayId())
-                .orElseThrow(() -> new RuntimeException("Dia do plano não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dia do plano não encontrado"));
 
         var session = new WorkoutSession();
         session.setUser(user);
         session.setTrainingPlanDay(trainingDay);
         session.setDate(req.date());
 
+        if (req.exercises() == null || req.exercises().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A sessão de treino deve conter pelo menos um exercício");
+        }
+
         for (var exReq : req.exercises()) {
             var workoutEx = new WorkoutExercise();
             workoutEx.setWorkoutSession(session);
             workoutEx.setExercise(exerciseRepository.findById(exReq.exerciseId())
-                    .orElseThrow(() -> new RuntimeException("Exercício não encontrado")));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado")));
 
             for (var setReq : exReq.sets()) {
                 var set = new WorkoutSet();
@@ -56,7 +62,7 @@ public class WorkoutSessionService {
     public WorkoutSessionCreateResponse.WorkoutSessionResponse detail(Long id, User user) {
         return workoutSessionRepository.findByIdAndUserIdWithDetails(id, user.getId())
                 .map(this::toResponse)
-                .orElseThrow(() -> new EntityNotFoundException("Treino não encontrado ou acesso negado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Treino não encontrado ou acesso negado"));
     }
 
     public Page<WorkoutSessionCreateResponse.WorkoutSessionResponse> list(User user, Pageable pageable) {
