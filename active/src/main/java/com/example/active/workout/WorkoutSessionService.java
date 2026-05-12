@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,11 +66,28 @@ public class WorkoutSessionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Treino não encontrado ou acesso negado"));
     }
 
-    public Page<WorkoutSessionCreateResponse.WorkoutSessionResponse> list(User user, Pageable pageable) {
-        return workoutSessionRepository.findAllByUserIdOrderByDateDesc(user.getId(), pageable)
-                .map(this::toResponse);
-    }
+    @Transactional(readOnly = true)
+    public Page<WorkoutSessionCreateResponse.WorkoutSessionResponse> list(
+            User user,
+            Specification<WorkoutSession> spec,
+            Pageable pageable) {
 
+        // Filtro obrigatório de segurança
+        Specification<WorkoutSession> userSpec = (root, query, builder) ->
+                builder.equal(root.get("user").get("id"), user.getId());
+
+        // União: (Filtro do Usuario) AND (Filtros da URL)
+        Page<WorkoutSession> page = workoutSessionRepository.findAll(
+                Specification.where(userSpec).and(spec),
+                pageable
+        );
+
+        if (page.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma sessão de treino encontrada.");
+        }
+
+        return page.map(this::toResponse);
+    }
 
     private WorkoutSessionCreateResponse.WorkoutSessionResponse toResponse(WorkoutSession session) {
         return new WorkoutSessionCreateResponse.WorkoutSessionResponse(
