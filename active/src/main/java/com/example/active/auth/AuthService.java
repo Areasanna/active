@@ -5,10 +5,13 @@ import com.example.active.user.dto.LoginRequest;
 import com.example.active.user.dto.LoginResponse;
 import com.example.active.user.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -17,25 +20,25 @@ public class AuthService {
     private final TokenUtil tokenUtil;
 
     public LoginResponse login(LoginRequest request) {
-        // Log de entrada
-        System.out.println(">>> 1. Recebi o email: " + request.email());
+        try {
+            // 1. Tenta autenticar o usuário
+            var loginData = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+            Authentication authentication = authManager.authenticate(loginData);
 
-        // Criamos o objeto de autenticação
-        var loginData = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+            // 2. Extrai o usuário autenticado
+            User user = (User) authentication.getPrincipal();
 
-        // O ponto mais comum de erro (Senha errada ou usuário não existe)
-        System.out.println(">>> 2. Vou pedir para o AuthManager autenticar...");
-        Authentication authentication = authManager.authenticate(loginData);
+            // 3. Gera o token
+            String token = tokenUtil.generateToken(user);
 
-        // Se chegar aqui, a senha estava correta
-        System.out.println(">>> 3. Autenticado com sucesso! Fazendo o cast...");
-        User user = (User) authentication.getPrincipal();
+            return new LoginResponse(token);
 
-        // O segundo ponto mais comum de erro (Chave JWT curta demais)
-        System.out.println(">>> 4. Vou gerar o token agora...");
-        String token = tokenUtil.generateToken(user);
-
-        System.out.println(">>> 5. Token gerado com sucesso!");
-        return new LoginResponse(token);
+        } catch (BadCredentialsException e) {
+            // Caso o e-mail ou a senha estejam incorretos
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos");
+        } catch (Exception e) {
+            // Caso ocorra qualquer outro erro (como erro na geração do token)
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao processar o login: " + e.getMessage());
+        }
     }
 }
