@@ -4,9 +4,11 @@ import com.example.active.muscle.dto.MuscleRequest;
 import com.example.active.muscle.dto.MuscleResponse;
 import com.example.active.muscle.model.Muscle;
 import com.example.active.muscle.repository.MuscleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,9 +18,14 @@ import org.springframework.web.server.ResponseStatusException;
 public class MuscleService {
     private final MuscleRepository repository;
 
-    public Page<MuscleResponse> list(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn()));
+    public Page<MuscleResponse> list(Specification<Muscle> spec, Pageable pageable) {
+        Page<Muscle> page = repository.findAll(spec, pageable);
+
+        if (page.isEmpty()) {
+            throw new EntityNotFoundException("Nenhum músculo encontrado.");
+        }
+
+        return page.map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn()));
     }
 
     public MuscleResponse create(MuscleRequest request) {
