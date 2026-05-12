@@ -8,6 +8,7 @@ import com.example.active.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,10 +57,18 @@ public class TrainingPlanService {
     }
 
 
-    @Transactional
-    public Page<TrainingPlanCreateResponse> list(User user, Pageable pageable) {
-        return trainingPlanRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId(), pageable)
-                .map(this::toResponse);
+    @Transactional(readOnly = true)
+    public Page<TrainingPlanCreateResponse> list(User user, Specification<TrainingPlan> spec, Pageable pageable) {
+
+        // Filtro fixo: O plano deve pertencer ao usuário logado
+        Specification<TrainingPlan> userSpec = (root, query, builder) ->
+                builder.equal(root.get("user").get("id"), user.getId());
+
+        // Combinamos o filtro de segurança com os filtros da URL (spec)
+        // .and(spec) garante que ambos sejam verdadeiros
+        Page<TrainingPlan> page = trainingPlanRepository.findAll(Specification.where(userSpec).and(spec), pageable);
+
+        return page.map(this::toResponse);
     }
 
     @Transactional
