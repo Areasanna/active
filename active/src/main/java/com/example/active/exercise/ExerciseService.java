@@ -1,19 +1,23 @@
 package com.example.active.exercise;
 
-import com.example.active.equipment.repository.EquipmentRepository;
 import com.example.active.equipment.dto.EquipmentResponse;
+import com.example.active.equipment.repository.EquipmentRepository;
 import com.example.active.exercise.dto.ExerciseCreateRequest;
 import com.example.active.exercise.dto.ExerciseResponse;
 import com.example.active.exercise.dto.ExerciseUpdateRequest;
-import com.example.active.exercise.model.*;
+import com.example.active.exercise.model.Exercise;
+import com.example.active.exercise.model.ExerciseCategory;
 import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.muscle.repository.MuscleRepository;
 import com.example.active.muscle.dto.MuscleResponse;
+import com.example.active.muscle.repository.MuscleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -53,15 +57,17 @@ public class ExerciseService {
         exerciseRepository.deleteById(id);
     }
 
-    public Page<ExerciseResponse> list(ExerciseCategory category, Long equipmentId, Long muscleId, Pageable pageable) {
-
-        var spec = ExerciseSpecs.filterExercises(category, equipmentId, muscleId);
+    @Transactional(readOnly = true)
+    public Page<ExerciseResponse> list(Specification<Exercise> spec, Pageable pageable) {
 
         Page<Exercise> exercisesPage = exerciseRepository.findAll(spec, pageable);
 
+        if (exercisesPage.isEmpty()) {
+            throw new EntityNotFoundException("Nenhum exercício encontrado para os filtros aplicados.");
+        }
+
         return exercisesPage.map(this::toResponse);
     }
-
     public ExerciseResponse findById(Long id) {
         var e = exerciseRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado"));
