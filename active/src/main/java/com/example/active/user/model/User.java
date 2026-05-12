@@ -7,9 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -17,7 +21,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,5 +53,39 @@ public class User {
     @Column(nullable = false, precision = 3, scale = 2)
     @Positive(message = "A altura deve ser maior que zero")
     private BigDecimal height;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Conta não expira
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Conta não bloqueia
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Senha não expira
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // Usuario está ativo
+    }
 }
 
