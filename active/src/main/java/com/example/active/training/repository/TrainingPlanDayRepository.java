@@ -2,12 +2,13 @@ package com.example.active.training.repository;
 
 import com.example.active.training.model.TrainingPlanDay;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface TrainingPlanDayRepository extends JpaRepository<TrainingPlanDay, Long> {
+public interface TrainingPlanDayRepository extends JpaRepository<TrainingPlanDay, Long>, JpaSpecificationExecutor<TrainingPlanDay> {
    //A consulta esta verificando a hierarquia dos seus dados para garantir a
    // segurança, para garantir que um usuario só acesse os dias do seu próprio plano):
     @Query("""

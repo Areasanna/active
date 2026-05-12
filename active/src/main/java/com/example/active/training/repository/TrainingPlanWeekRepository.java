@@ -2,11 +2,12 @@ package com.example.active.training.repository;
 
 import com.example.active.training.model.TrainingPlanWeek;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface TrainingPlanWeekRepository extends JpaRepository<TrainingPlanWeek, Long> {
+public interface TrainingPlanWeekRepository extends JpaRepository<TrainingPlanWeek, Long>, JpaSpecificationExecutor<TrainingPlanWeek> {
     // Garante que o usuario só acesse uma semana que pertence ao plano DELE
     @Query("""
                 SELECT w FROM TrainingPlanWeek w 
