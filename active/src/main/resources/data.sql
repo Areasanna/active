@@ -1,2 +1,2 @@
-INSERT INTO muscles(id,name,name_en) VALUES (1,'Peitoral maior','Chest'), (2,'Anterior deltoide','Shoulders'), (3,'Quadríceps','Quads'), (4,'Bíceps','Biceps'), (5,'Tríceps','Triceps');
+INSERT INTO muscles(id,name, name_en) VALUES (1,'Peitoral maior','Chest'), (2,'Anterior deltoide','Shoulders'), (3,'Quadríceps','Quads'), (4,'Bíceps','Biceps'), (5,'Tríceps','Triceps');
 INSERT INTO equipment(id,name) VALUES (1,'Barbell'),(2,'Bench'),(3,'Dumbbell'),(4,'Pull-up bar'),(5,'Bodyweight');
