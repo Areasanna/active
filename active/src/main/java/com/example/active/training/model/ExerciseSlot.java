@@ -1,6 +1,6 @@
 package com.example.active.training.model;
 
-import com.example.active.exercise.Exercise;
+import com.example.active.exercise.model.Exercise;
 import jakarta.persistence.*;
 import lombok.*;
 

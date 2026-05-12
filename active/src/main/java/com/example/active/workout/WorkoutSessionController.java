@@ -1,6 +1,8 @@
 package com.example.active.workout;
 
-import com.example.active.user.User;
+import com.example.active.user.model.User;
+import com.example.active.workout.dto.WorkoutSessionCreateRequest;
+import com.example.active.workout.dto.WorkoutSessionCreateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

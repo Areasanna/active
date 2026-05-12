@@ -1,5 +1,7 @@
 package com.example.active.user;
 
+import com.example.active.user.dto.UserRequest;
+import com.example.active.user.dto.UserResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

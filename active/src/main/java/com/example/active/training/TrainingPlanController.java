@@ -1,6 +1,8 @@
 package com.example.active.training;
 
-import com.example.active.user.User;
+import com.example.active.training.dto.TrainingPlanCreateRequest;
+import com.example.active.training.dto.TrainingPlanCreateResponse;
+import com.example.active.user.model.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

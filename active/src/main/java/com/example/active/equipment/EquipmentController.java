@@ -1,5 +1,7 @@
 package com.example.active.equipment;
 
+import com.example.active.equipment.dto.EquipmentRequest;
+import com.example.active.equipment.dto.EquipmentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,6 +1,7 @@
 package com.example.active.training;
 
-import com.example.active.user.User;
+import com.example.active.training.model.dto.PersonalRecordResponse;
+import com.example.active.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

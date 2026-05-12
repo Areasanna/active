@@ -1,9 +1,14 @@
 package com.example.active.exercise;
 
-import com.example.active.equipment.EquipmentRepository;
-import com.example.active.equipment.EquipmentResponse;
-import com.example.active.muscle.MuscleRepository;
-import com.example.active.muscle.MuscleResponse;
+import com.example.active.equipment.repository.EquipmentRepository;
+import com.example.active.equipment.dto.EquipmentResponse;
+import com.example.active.exercise.dto.ExerciseCreateRequest;
+import com.example.active.exercise.dto.ExerciseResponse;
+import com.example.active.exercise.dto.ExerciseUpdateRequest;
+import com.example.active.exercise.model.*;
+import com.example.active.exercise.repository.ExerciseRepository;
+import com.example.active.muscle.repository.MuscleRepository;
+import com.example.active.muscle.dto.MuscleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

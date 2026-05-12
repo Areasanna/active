@@ -1,5 +1,9 @@
 package com.example.active.equipment;
 
+import com.example.active.equipment.dto.EquipmentRequest;
+import com.example.active.equipment.dto.EquipmentResponse;
+import com.example.active.equipment.model.Equipment;
+import com.example.active.equipment.repository.EquipmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

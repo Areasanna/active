@@ -1,5 +1,9 @@
 package com.example.active.exercise;
 
+import com.example.active.exercise.dto.ExerciseResponse;
+import com.example.active.exercise.model.ExerciseCategory;
+import com.example.active.exercise.dto.ExerciseCreateRequest;
+import com.example.active.exercise.dto.ExerciseUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

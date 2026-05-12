@@ -1,6 +1,10 @@
 package com.example.active.user;
 
 import com.example.active.exception.EmailCadastrado;
+import com.example.active.user.dto.UserRequest;
+import com.example.active.user.dto.UserResponse;
+import com.example.active.user.model.User;
+import com.example.active.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

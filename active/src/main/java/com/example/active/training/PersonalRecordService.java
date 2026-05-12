@@ -1,8 +1,9 @@
 package com.example.active.training;
 
-import com.example.active.exercise.ExerciseRepository;
-import com.example.active.workout.WorkoutSessionRepository;
-import com.example.active.workout.WorkoutSetRepository;
+import com.example.active.exercise.repository.ExerciseRepository;
+import com.example.active.training.model.dto.PersonalRecordResponse;
+import com.example.active.workout.repository.WorkoutSessionRepository;
+import com.example.active.workout.repository.WorkoutSetRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,7 @@
 package com.example.active.exercise;
 
+import com.example.active.exercise.model.Exercise;
+import com.example.active.exercise.model.ExerciseCategory;
 import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,7 @@
 package com.example.active.muscle;
 
+import com.example.active.muscle.dto.MuscleRequest;
+import com.example.active.muscle.dto.MuscleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

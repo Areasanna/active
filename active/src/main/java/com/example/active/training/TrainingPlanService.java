@@ -1,11 +1,11 @@
 package com.example.active.training;
 
-import com.example.active.exercise.ExerciseRepository;
-import com.example.active.training.model.ExerciseSlot;
-import com.example.active.training.model.TrainingPlan;
-import com.example.active.training.model.TrainingPlanDay;
-import com.example.active.training.model.TrainingPlanWeek;
-import com.example.active.user.User;
+import com.example.active.exercise.repository.ExerciseRepository;
+import com.example.active.training.dto.TrainingPlanCreateRequest;
+import com.example.active.training.dto.TrainingPlanCreateResponse;
+import com.example.active.training.model.*;
+import com.example.active.training.repository.TrainingPlanRepository;
+import com.example.active.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

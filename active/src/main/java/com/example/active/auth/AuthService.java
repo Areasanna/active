@@ -1,9 +1,9 @@
 package com.example.active.auth;
 
-import com.example.active.user.LoginRequest;
-import com.example.active.user.LoginResponse;
-import com.example.active.user.User;
-import com.example.active.user.UserRepository;
+import com.example.active.user.dto.LoginRequest;
+import com.example.active.user.dto.LoginResponse;
+import com.example.active.user.model.User;
+import com.example.active.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;

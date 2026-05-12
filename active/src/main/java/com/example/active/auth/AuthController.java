@@ -1,7 +1,7 @@
 package com.example.active.auth;
 
-import com.example.active.user.LoginRequest;
-import com.example.active.user.LoginResponse;
+import com.example.active.user.dto.LoginRequest;
+import com.example.active.user.dto.LoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
