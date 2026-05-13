@@ -104,6 +104,7 @@ public class UserService {
                 user.getAge(),
                 user.getWeight(),
                 user.getHeight(),
+                user.getRole(),
                 user.getCreatedAt()
         );
     }
