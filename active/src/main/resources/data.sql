@@ -1,2 +1,11 @@
-INSERT INTO muscles(id,name, name_en) VALUES (1,'Peitoral maior','Chest'), (2,'Anterior deltoide','Shoulders'), (3,'Quadríceps','Quads'), (4,'Bíceps','Biceps'), (5,'Tríceps','Triceps');
-INSERT INTO equipment(id,name) VALUES (1,'Barbell'),(2,'Bench'),(3,'Dumbbell'),(4,'Pull-up bar'),(5,'Bodyweight');
+MERGE INTO muscles (name, name_en) KEY(name) VALUES ('Peitoral maior','Chest');
+MERGE INTO muscles (name, name_en) KEY(name) VALUES ('Anterior deltoide','Shoulders');
+MERGE INTO muscles (name, name_en) KEY(name) VALUES ('Quadríceps','Quads');
+MERGE INTO muscles (name, name_en) KEY(name) VALUES ('Bíceps','Biceps');
+MERGE INTO muscles (name, name_en) KEY(name) VALUES ('Tríceps','Triceps');
+
+MERGE INTO equipment (name) KEY(name) VALUES ('Barbell');
+MERGE INTO equipment (name) KEY(name) VALUES ('Bench');
+MERGE INTO equipment (name) KEY(name) VALUES ('Dumbbell');
+MERGE INTO equipment (name) KEY(name) VALUES ('Pull-up bar');
+MERGE INTO equipment (name) KEY(name) VALUES ('Bodyweight');

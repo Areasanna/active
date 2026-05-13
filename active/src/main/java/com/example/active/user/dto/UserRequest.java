@@ -1,5 +1,6 @@
 package com.example.active.user.dto;
 
+import com.example.active.user.model.Role;
 import com.example.active.user.model.TrainingLevel;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,9 @@ public class UserRequest {
     @NotNull(message = "A altura é obrigatória")
     @Positive(message = "A altura deve ser maior que zero")
     private BigDecimal height;
+
+    @NotNull
+    Role role;
 }
 
 

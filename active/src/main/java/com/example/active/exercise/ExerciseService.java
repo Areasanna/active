@@ -1,19 +1,23 @@
 package com.example.active.exercise;
 
-import com.example.active.equipment.repository.EquipmentRepository;
 import com.example.active.equipment.dto.EquipmentResponse;
+import com.example.active.equipment.repository.EquipmentRepository;
 import com.example.active.exercise.dto.ExerciseCreateRequest;
 import com.example.active.exercise.dto.ExerciseResponse;
 import com.example.active.exercise.dto.ExerciseUpdateRequest;
-import com.example.active.exercise.model.*;
+import com.example.active.exercise.model.Exercise;
+import com.example.active.exercise.model.ExerciseCategory;
 import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.muscle.repository.MuscleRepository;
 import com.example.active.muscle.dto.MuscleResponse;
+import com.example.active.muscle.repository.MuscleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -27,78 +31,87 @@ public class ExerciseService {
     private final EquipmentRepository equipmentRepository;
     private final MuscleRepository muscleRepository;
 
+    @Transactional
     public ExerciseResponse create(ExerciseCreateRequest req) {
-        validateCategory(req.category());
         Exercise exercise = new Exercise();
         populateExerciseFromDto(exercise, req.title(), req.description(), req.videoUrl(), req.category(),
                 req.equipmentIds(), req.primaryMuscleIds(), req.secondaryMuscleIds());
-        exerciseRepository.save(exercise);
-        return toResponse(exercise);
+
+        return toResponse(exerciseRepository.save(exercise));
     }
 
+    @Transactional
     public ExerciseResponse update(Long id, ExerciseUpdateRequest request) {
         Exercise exercise = exerciseRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado"));
-        validateCategory(request.category());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado"));
+
         populateExerciseFromDto(exercise, request.title(), request.description(),
                 request.videoUrl(), request.category(), request.equipmentIds(),
                 request.primaryMuscleIds(), request.secondaryMuscleIds());
-        exerciseRepository.save(exercise);
-        return toResponse(exercise);
+
+        return toResponse(exerciseRepository.save(exercise));
     }
 
+    @Transactional
     public void delete(Long id) {
         if (!exerciseRepository.existsById(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado");
         exerciseRepository.deleteById(id);
     }
 
-    public Page<ExerciseResponse> list(ExerciseCategory category, Long equipmentId, Long muscleId, Pageable pageable) {
-
-        var spec = ExerciseSpecs.filterExercises(category, equipmentId, muscleId);
-
+    @Transactional(readOnly = true)
+    public Page<ExerciseResponse> list(Specification<Exercise> spec, Pageable pageable) {
         Page<Exercise> exercisesPage = exerciseRepository.findAll(spec, pageable);
-
         return exercisesPage.map(this::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public ExerciseResponse findById(Long id) {
-        var e = exerciseRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado"));
-        return toResponse(e);
+        return exerciseRepository.findById(id)
+                .map(this::toResponse)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado"));
     }
 
-    //Verifica se a categoria enviada pelo usuario é nula.
-    private void validateCategory(ExerciseCategory category) {
-        if (category == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria inválida");
-    }
-    //transforma os dados brutos que vêm da API em objetos reais do banco de dados.
     private void populateExerciseFromDto(
             Exercise exercise, String title, String desc, String videoUrl,
             ExerciseCategory category, List<Long> equipmentIds,
             List<Long> primaryMuscleIds, List<Long> secondaryMuscleIds) {
-
-        equipmentIds = equipmentIds == null ? List.of() : equipmentIds;
-        primaryMuscleIds = primaryMuscleIds == null ? List.of() : primaryMuscleIds;
 
         exercise.setTitle(title);
         exercise.setDescription(desc);
         exercise.setVideoUrl(videoUrl);
         exercise.setCategory(category);
 
-        exercise.setEquipment(new HashSet<>(equipmentRepository.findAllById(equipmentIds)));
-        exercise.setPrimaryMuscles(new HashSet<>(muscleRepository.findAllById(primaryMuscleIds)));
+        // Validação de Equipamentos
+        var equipments = equipmentRepository.findAllById(equipmentIds != null ? equipmentIds : List.of());
+        if (equipmentIds != null && equipments.size() != equipmentIds.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Um ou mais IDs de equipamentos são inválidos");
+        }
+        exercise.setEquipment(new HashSet<>(equipments));
 
-        if (secondaryMuscleIds != null && !secondaryMuscleIds.isEmpty())
-            exercise.setSecondaryMuscles(new HashSet<>(muscleRepository.findAllById(secondaryMuscleIds)));
-        else
+        // Validação de Músculos Primários
+        var primary = muscleRepository.findAllById(primaryMuscleIds != null ? primaryMuscleIds : List.of());
+        if (primaryMuscleIds != null && primary.size() != primaryMuscleIds.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Um ou mais IDs de músculos primários são inválidos");
+        }
+        exercise.setPrimaryMuscles(new HashSet<>(primary));
+
+        // Músculos Secundários (Opcionais)
+        if (secondaryMuscleIds != null && !secondaryMuscleIds.isEmpty()) {
+            var secondary = muscleRepository.findAllById(secondaryMuscleIds);
+            if (secondary.size() != secondaryMuscleIds.size()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Um ou mais IDs de músculos secundários são inválidos");
+            }
+            exercise.setSecondaryMuscles(new HashSet<>(secondary));
+        } else {
             exercise.setSecondaryMuscles(new HashSet<>());
+        }
 
-        if (exercise.getEquipment().isEmpty() || exercise.getPrimaryMuscles().isEmpty())
+        if (exercise.getEquipment().isEmpty() || exercise.getPrimaryMuscles().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deve possuir ao menos um equipamento e músculo primário");
+        }
     }
-    //faz o mapeamento Entidade para DTO
+
     private ExerciseResponse toResponse(Exercise e) {
         return new ExerciseResponse(
                 e.getId(),
@@ -106,12 +119,9 @@ public class ExerciseService {
                 e.getDescription(),
                 e.getVideoUrl(),
                 e.getCategory(),
-                e.getEquipment().stream()
-                        .map(eq -> new EquipmentResponse(eq.getId(), eq.getName())).toList(),
-                e.getPrimaryMuscles().stream()
-                        .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList(),
-                e.getSecondaryMuscles().stream()
-                        .map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList()
+                e.getEquipment().stream().map(eq -> new EquipmentResponse(eq.getId(), eq.getName())).toList(),
+                e.getPrimaryMuscles().stream().map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList(),
+                e.getSecondaryMuscles().stream().map(m -> new MuscleResponse(m.getId(), m.getName(), m.getNameEn())).toList()
         );
     }
 }

@@ -9,8 +9,8 @@ import java.util.List;
 public record ExerciseResponse(
         Long id,
         String title,
-        String videoUrl,
         String description,
+        String videoUrl,
         ExerciseCategory category,
         List<EquipmentResponse> equipment,
         List<MuscleResponse> primaryMuscles,

@@ -1,5 +1,6 @@
 package com.example.active.training;
 
+import com.example.active.exercise.model.Exercise;
 import com.example.active.exercise.repository.ExerciseRepository;
 import com.example.active.training.dto.*;
 import com.example.active.training.model.*;
@@ -8,8 +9,14 @@ import com.example.active.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,48 +25,78 @@ public class TrainingPlanService {
     private final ExerciseRepository exerciseRepository;
 
     @Transactional
-    public TrainingPlanCreateResponse create(TrainingPlanCreateRequest request, User user) { // Alterado para TrainingPlanResponse
-        TrainingPlan plan = new TrainingPlan();
-        plan.setName(request.name());
-        plan.setGoal(request.goal());
-        plan.setWeekCount(request.weekCount());
-        plan.setUser(user);
+    public TrainingPlanCreateResponse create(TrainingPlanCreateRequest request, User user) {
+        // 1. Coleta todos os IDs de exercícios do request de uma vez
+        Set<Long> allExerciseIds = request.weeks().stream()
+                .flatMap(w -> w.days().stream())
+                .flatMap(d -> d.exercises().stream())
+                .map(ExerciseSlotRequest::exerciseId)
+                .collect(Collectors.toSet());
 
-        for (var weekReq : request.weeks()) {
-            TrainingPlanWeek week = new TrainingPlanWeek();
-            week.setWeekNumber(weekReq.weekNumber());
-            week.setTrainingPlan(plan);
+        // 2. Busca todos de uma vez e coloca num mapa para acesso rápido
+        Map<Long, Exercise> exerciseMap = exerciseRepository.findAllById(allExerciseIds).stream()
+                .collect(Collectors.toMap(Exercise::getId, e -> e));
+
+        if (exerciseMap.size() != allExerciseIds.size()) {
+            throw new RuntimeException("Um ou mais exercícios informados não existem");
+        }
+
+        TrainingPlan plan = TrainingPlan.builder()
+                .name(request.name())
+                .goal(request.goal())
+                .weekCount(request.weekCount())
+                .user(user)
+                .weeks(new ArrayList<>())
+                .build();
+
+        // 3. Montagem da hierarquia (mantendo sua lógica, mas usando o mapa)
+        request.weeks().forEach(weekReq -> {
+            TrainingPlanWeek week = TrainingPlanWeek.builder()
+                    .weekNumber(weekReq.weekNumber())
+                    .trainingPlan(plan)
+                    .days(new ArrayList<>())
+                    .build();
             plan.getWeeks().add(week);
 
-            for (var dReq : weekReq.days()) {
-                TrainingPlanDay day = new TrainingPlanDay();
-                day.setDayOfWeek(dReq.dayOfWeek());
-                day.setSplitFocus(dReq.splitFocus());
-                day.setTrainingPlanWeek(week);
+            weekReq.days().forEach(dReq -> {
+                TrainingPlanDay day = TrainingPlanDay.builder()
+                        .dayOfWeek(dReq.dayOfWeek())
+                        .splitFocus(dReq.splitFocus())
+                        .trainingPlanWeek(week)
+                        .exercises(new ArrayList<>())
+                        .build();
                 week.getDays().add(day);
 
-                for (var sReq : dReq.exercises()) {
-                    ExerciseSlot slot = new ExerciseSlot();
-                    slot.setExercise(exerciseRepository.findById(sReq.exerciseId())
-                            .orElseThrow(() -> new RuntimeException("Exercício não encontrado: " + sReq.exerciseId())));
-                    slot.setSets(sReq.sets());
-                    slot.setReps(sReq.reps());
-                    slot.setWeightKg(sReq.weightKg());
-                    slot.setRestSeconds(sReq.restSeconds());
-                    slot.setTrainingPlanDay(day);
+                dReq.exercises().forEach(sReq -> {
+                    ExerciseSlot slot = ExerciseSlot.builder()
+                            .exercise(exerciseMap.get(sReq.exerciseId())) // Busca no mapa, sem SELECT
+                            .sets(sReq.sets())
+                            .reps(sReq.reps())
+                            .weightKg(sReq.weightKg())
+                            .restSeconds(sReq.restSeconds())
+                            .trainingPlanDay(day)
+                            .build();
                     day.getExercises().add(slot);
-                }
-            }
-        }
-        TrainingPlan savedPlan = trainingPlanRepository.save(plan);
-        return toResponse(savedPlan);
+                });
+            });
+        });
+
+        return toResponse(trainingPlanRepository.save(plan));
     }
 
 
-    @Transactional
-    public Page<TrainingPlanCreateResponse> list(User user, Pageable pageable) {
-        return trainingPlanRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId(), pageable)
-                .map(this::toResponse);
+    @Transactional(readOnly = true)
+    public Page<TrainingPlanCreateResponse> list(User user, Specification<TrainingPlan> spec, Pageable pageable) {
+
+        // Filtro fixo: O plano deve pertencer ao usuário logado
+        Specification<TrainingPlan> userSpec = (root, query, builder) ->
+                builder.equal(root.get("user").get("id"), user.getId());
+
+        // Combinamos o filtro de segurança com os filtros da URL (spec)
+        // .and(spec) garante que ambos sejam verdadeiros
+        Page<TrainingPlan> page = trainingPlanRepository.findAll(Specification.where(userSpec).and(spec), pageable);
+
+        return page.map(this::toResponse);
     }
 
     @Transactional

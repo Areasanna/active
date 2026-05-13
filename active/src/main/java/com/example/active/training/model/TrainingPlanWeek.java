@@ -26,6 +26,7 @@ public class TrainingPlanWeek {
     private TrainingPlan trainingPlan;
 
     @OneToMany(mappedBy = "trainingPlanWeek", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("dayOfWeek ASC")
     @Builder.Default
     private List<TrainingPlanDay> days = new ArrayList<>();
 }

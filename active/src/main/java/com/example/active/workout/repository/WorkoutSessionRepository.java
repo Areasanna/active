@@ -4,11 +4,12 @@ import com.example.active.workout.model.WorkoutSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
-public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, Long> {
+public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, Long>, JpaSpecificationExecutor<WorkoutSession> {
 
     Page<WorkoutSession> findAllByUserIdOrderByDateDesc(Long userId, Pageable pageable);
    //consulta a tela de detalhes do treino, onde você precisa exibir cada exercício e

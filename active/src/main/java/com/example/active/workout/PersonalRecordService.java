@@ -1,4 +1,4 @@
-package com.example.active.training;
+package com.example.active.workout;
 
 import com.example.active.exercise.repository.ExerciseRepository;
 import com.example.active.training.dto.PersonalRecordResponse;

@@ -1,6 +1,8 @@
 package com.example.active.workout;
 
+import com.example.active.exercise.model.Exercise;
 import com.example.active.exercise.repository.ExerciseRepository;
+import com.example.active.training.model.TrainingPlanDay;
 import com.example.active.training.repository.TrainingPlanDayRepository;
 import com.example.active.user.model.User;
 import com.example.active.workout.dto.WorkoutSessionCreateRequest;
@@ -13,8 +15,16 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,45 +35,75 @@ public class WorkoutSessionService {
 
     @Transactional
     public WorkoutSessionCreateResponse.WorkoutSessionResponse registerSession(WorkoutSessionCreateRequest.Create req, User user) {
-        var trainingDay = trainingPlanDayRepository.findById(req.trainingPlanDayId())
-                .orElseThrow(() -> new RuntimeException("Dia do plano não encontrado"));
+        // 1. Busca opcional do dia do plano (Permite treinos avulsos)
+        TrainingPlanDay trainingDay = null;
+        if (req.trainingPlanDayId() != null) {
+            trainingDay = trainingPlanDayRepository.findById(req.trainingPlanDayId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dia do plano não encontrado"));
+        }
 
-        var session = new WorkoutSession();
-        session.setUser(user);
-        session.setTrainingPlanDay(trainingDay);
-        session.setDate(req.date());
+        // 2. Otimização de busca de exercícios (1 SELECT apenas)
+        Set<Long> exIds = req.exercises().stream().map(e -> e.exerciseId()).collect(Collectors.toSet());
+        Map<Long, Exercise> exerciseMap = exerciseRepository.findAllById(exIds).stream()
+                .collect(Collectors.toMap(Exercise::getId, e -> e));
+
+        var session = WorkoutSession.builder()
+                .user(user)
+                .trainingPlanDay(trainingDay)
+                .date(req.date())
+                .build();
 
         for (var exReq : req.exercises()) {
-            var workoutEx = new WorkoutExercise();
-            workoutEx.setWorkoutSession(session);
-            workoutEx.setExercise(exerciseRepository.findById(exReq.exerciseId())
-                    .orElseThrow(() -> new RuntimeException("Exercício não encontrado")));
+            Exercise exercise = exerciseMap.get(exReq.exerciseId());
+            if (exercise == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício inválido");
+
+            var workoutEx = WorkoutExercise.builder()
+                    .workoutSession(session)
+                    .exercise(exercise)
+                    .sets(new ArrayList<>())
+                    .build();
 
             for (var setReq : exReq.sets()) {
-                var set = new WorkoutSet();
-                set.setWorkoutExercise(workoutEx);
-                set.setReps(setReq.reps());
-                set.setWeightKg(setReq.weightKg());
-                workoutEx.getSets().add(set);
+                workoutEx.getSets().add(WorkoutSet.builder()
+                        .workoutExercise(workoutEx)
+                        .reps(setReq.reps())
+                        .weightKg(setReq.weightKg())
+                        .build());
             }
             session.getExercises().add(workoutEx);
         }
 
-        var savedSession = workoutSessionRepository.save(session);
-        return toResponse(savedSession);
+        return toResponse(workoutSessionRepository.save(session));
     }
     @Transactional(readOnly = true)
     public WorkoutSessionCreateResponse.WorkoutSessionResponse detail(Long id, User user) {
         return workoutSessionRepository.findByIdAndUserIdWithDetails(id, user.getId())
                 .map(this::toResponse)
-                .orElseThrow(() -> new EntityNotFoundException("Treino não encontrado ou acesso negado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Treino não encontrado ou acesso negado"));
     }
 
-    public Page<WorkoutSessionCreateResponse.WorkoutSessionResponse> list(User user, Pageable pageable) {
-        return workoutSessionRepository.findAllByUserIdOrderByDateDesc(user.getId(), pageable)
-                .map(this::toResponse);
-    }
+    @Transactional(readOnly = true)
+    public Page<WorkoutSessionCreateResponse.WorkoutSessionResponse> list(
+            User user,
+            Specification<WorkoutSession> spec,
+            Pageable pageable) {
 
+        // Filtro obrigatório de segurança
+        Specification<WorkoutSession> userSpec = (root, query, builder) ->
+                builder.equal(root.get("user").get("id"), user.getId());
+
+        // União: (Filtro do Usuario) AND (Filtros da URL)
+        Page<WorkoutSession> page = workoutSessionRepository.findAll(
+                Specification.where(userSpec).and(spec),
+                pageable
+        );
+
+        if (page.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma sessão de treino encontrada.");
+        }
+
+        return page.map(this::toResponse);
+    }
 
     private WorkoutSessionCreateResponse.WorkoutSessionResponse toResponse(WorkoutSession session) {
         return new WorkoutSessionCreateResponse.WorkoutSessionResponse(

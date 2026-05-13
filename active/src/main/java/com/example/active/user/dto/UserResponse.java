@@ -1,5 +1,6 @@
 package com.example.active.user.dto;
 
+import com.example.active.user.model.Role;
 import com.example.active.user.model.TrainingLevel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
@@ -13,7 +14,9 @@ public record UserResponse(
         Integer age,
         BigDecimal weight,
         BigDecimal height,
+        Role role,
         //formatação para a data sair mais legível
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime createdAt
+
 ){}
