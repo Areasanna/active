@@ -1,13 +1,13 @@
 package com.example.active.config;
 
 import com.example.active.auth.AuthFilter;
-import com.example.active.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,26 +19,42 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
     private final AuthFilter authFilter;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Recomendado para JWT
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Públicos: Swagger, H2 e Auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**", "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users", "/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
 
-                        // Privados: Agora precisam de Token para o @AuthenticationPrincipal funcionar
-                        .requestMatchers(HttpMethod.POST, "/workout-sessions/**", "/training-plans/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/workout-sessions/**", "/training-plans/**", "/personal-record/**").authenticated()
+                        // Auth e Cadastro
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
 
-                        // O resto (exercícios, músculos, etc) você decide se deixa aberto ou fechado:
-                        .anyRequest().permitAll()
+                        // Consultas públicas
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/exercises/**").permitAll()
+
+                        // Apenas Admin
+                        .requestMatchers(HttpMethod.POST, "/exercises/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/exercises/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/exercises/**").hasRole("ADMIN")
+
+                        // Consultas e Edições com login
+                        .requestMatchers("/workout-sessions/**").authenticated()
+                        .requestMatchers("/training-plans/**").authenticated()
+                        .requestMatchers("/personal-record/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/exercises", "/training-plans/**", "/workout-sessions/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/exercises").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/exercises").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/exercises").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/workout-sessions/**", "/training-plans/**", "/exercises/{id}/personal-record/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
