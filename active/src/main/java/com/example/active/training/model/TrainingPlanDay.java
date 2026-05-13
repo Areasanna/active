@@ -20,7 +20,7 @@ public class TrainingPlanDay {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "day_of_ week", nullable = false)
+    @Column(name = "day_of_week", nullable = false)
     private DayOfWeek dayOfWeek;
 
     @Enumerated(EnumType.STRING)
@@ -32,6 +32,7 @@ public class TrainingPlanDay {
     private TrainingPlanWeek trainingPlanWeek;
 
     @OneToMany(mappedBy = "trainingPlanDay", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("id ASC")
     @Builder.Default
     private List<ExerciseSlot> exercises = new ArrayList<>();
 }
