@@ -12,27 +12,39 @@ import java.util.Date;
 
 @Component
 public class TokenUtil {
-    @Value("${jwt.secret}")
-    private String secret;
+
+    private final SecretKey key;
+    private final long expirationTime;
+
+    // Usando construtor para garantir que a chave seja gerada no boot
+    public TokenUtil(@Value("${jwt.secret}") String secret,
+                     @Value("${jwt.expiration:3600000}") long expirationTime) {
+
+        // Garante que a chave tem o tamanho correto e é inicializada uma vez
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationTime = expirationTime;
+    }
 
     public String generateToken(User user) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .subject(user.getEmail())
                 .issuer("ActiveAPI")
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
                 .compact();
     }
 
     public String validateAndGetUsername(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
