@@ -71,7 +71,7 @@ public class UserController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateById(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
-        logger.info("Put/usuario - Identificador: {}, id");
+        logger.info("Put/usuario - Identificador: {}", id);
         UserResponse response = userservice.atualizarPorId(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
