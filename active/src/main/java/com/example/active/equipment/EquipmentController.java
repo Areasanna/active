@@ -34,8 +34,7 @@ public class EquipmentController {
             @Parameter(hidden = true)
             @And({
                     @Spec(path = "name", spec = LikeIgnoreCase.class),
-                    @Spec(path = "id", spec = LikeIgnoreCase.class),
-                    @Spec(path = "active", spec = Equal.class)
+                    @Spec(path = "id", spec = Equal.class)
             }) Specification<Equipment> spec,
             @PageableDefault(size = 10) Pageable pageable) {
 
