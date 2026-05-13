@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.kaczmarzyk.spring.data.jpa.domain.Between;
+import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.LikeIgnoreCase;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
@@ -44,8 +45,15 @@ public class WorkoutSessionController {
             @AuthenticationPrincipal User userAutenticado,
             @Parameter(hidden = true)
             @And({
+                    // Filtro por intervalo de datas
                     @Spec(path = "date", params = {"fromDate", "toDate"}, spec = Between.class),
-                    @Spec(path = "workoutName", spec = LikeIgnoreCase.class)
+
+                    // Navegando pelas relações para chegar no nome do plano
+                    // O path segue a hierarquia das classes: trainingPlanDay -> trainingPlan -> name
+                    @Spec(path = "trainingPlanDay.trainingPlan.name", params = "planName", spec = LikeIgnoreCase.class),
+
+                    // Filtro opcional por id do exercício específico dentro da sessão
+                    @Spec(path = "exercises.exercise.id", params = "exerciseId", spec = Equal.class)
             }) Specification<WorkoutSession> spec,
             @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
 
