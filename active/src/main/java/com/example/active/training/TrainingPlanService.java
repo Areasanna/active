@@ -26,14 +26,14 @@ public class TrainingPlanService {
 
     @Transactional
     public TrainingPlanCreateResponse create(TrainingPlanCreateRequest request, User user) {
-        // 1. Coleta todos os IDs de exercícios do request de uma vez
+        // Coleta todos os IDs de exercícios do request de uma vez
         Set<Long> allExerciseIds = request.weeks().stream()
                 .flatMap(w -> w.days().stream())
                 .flatMap(d -> d.exercises().stream())
                 .map(ExerciseSlotRequest::exerciseId)
                 .collect(Collectors.toSet());
 
-        // 2. Busca todos de uma vez e coloca num mapa para acesso rápido
+        // Busca todos de uma vez e coloca num mapa para acesso rápido
         Map<Long, Exercise> exerciseMap = exerciseRepository.findAllById(allExerciseIds).stream()
                 .collect(Collectors.toMap(Exercise::getId, e -> e));
 
@@ -49,7 +49,7 @@ public class TrainingPlanService {
                 .weeks(new ArrayList<>())
                 .build();
 
-        // 3. Montagem da hierarquia (mantendo sua lógica, mas usando o mapa)
+        // Montagem da hierarquia
         request.weeks().forEach(weekReq -> {
             TrainingPlanWeek week = TrainingPlanWeek.builder()
                     .weekNumber(weekReq.weekNumber())
