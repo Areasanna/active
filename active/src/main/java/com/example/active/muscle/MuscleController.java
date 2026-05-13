@@ -33,8 +33,7 @@ public class MuscleController {
             @Parameter(hidden = true)
             @And({
                     @Spec(path = "name", spec = LikeIgnoreCase.class),
-                    @Spec(path = "group", spec = Equal.class),
-                    @Spec(path = "active", spec = Equal.class)
+                    @Spec(path = "nameEn", spec = LikeIgnoreCase.class)
             }) Specification<Muscle> spec,
             @PageableDefault(size = 10) Pageable pageable) {
 
