@@ -32,6 +32,7 @@ public class MuscleService {
         validateMuscleRequest(request);
         var muscle = Muscle.builder()
                 .name(request.name())
+                .nameEn(request.nameEn())
                 .build();
         repository.save(muscle);
         return new MuscleResponse(muscle.getId(), muscle.getName(), muscle.getNameEn());
