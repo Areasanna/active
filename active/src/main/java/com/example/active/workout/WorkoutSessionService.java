@@ -75,6 +75,7 @@ public class WorkoutSessionService {
 
         return toResponse(workoutSessionRepository.save(session));
     }
+    // Busca os detalhes de uma sessão de treino específica
     @Transactional(readOnly = true)
     public WorkoutSessionCreateResponse.WorkoutSessionResponse detail(Long id, User user) {
         return workoutSessionRepository.findByIdAndUserIdWithDetails(id, user.getId())
