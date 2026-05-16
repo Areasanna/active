@@ -35,5 +35,3 @@ build/
 # Segredos e Variáveis de Ambiente
 .env
 
-# Ignorar configurações locais com senhas
-src/main/resources/application-dev.properties
