@@ -69,7 +69,7 @@ public class TrainingPlanService {
 
                 dReq.exercises().forEach(sReq -> {
                     ExerciseSlot slot = ExerciseSlot.builder()
-                            .exercise(exerciseMap.get(sReq.exerciseId())) // Busca no mapa, sem SELECT
+                            .exercise(exerciseMap.get(sReq.exerciseId()))
                             .sets(sReq.sets())
                             .reps(sReq.reps())
                             .weightKg(sReq.weightKg())
@@ -88,13 +88,18 @@ public class TrainingPlanService {
     @Transactional(readOnly = true)
     public Page<TrainingPlanCreateResponse> list(User user, Specification<TrainingPlan> spec, Pageable pageable) {
 
-        // Filtro fixo: O plano deve pertencer ao usuário logado
+        // O plano deve pertencer ao usuario logado
         Specification<TrainingPlan> userSpec = (root, query, builder) ->
                 builder.equal(root.get("user").get("id"), user.getId());
 
-        // Combinamos o filtro de segurança com os filtros da URL (spec)
-        // .and(spec) garante que ambos sejam verdadeiros
-        Page<TrainingPlan> page = trainingPlanRepository.findAll(Specification.where(userSpec).and(spec), pageable);
+        // base com o filtro do usuario
+        Specification<TrainingPlan> finalSpec = Specification.where(userSpec);
+
+        if (spec != null) {
+            finalSpec = finalSpec.and(spec);
+        }
+
+        Page<TrainingPlan> page = trainingPlanRepository.findAll(finalSpec, pageable);
 
         return page.map(this::toResponse);
     }
