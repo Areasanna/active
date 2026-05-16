@@ -31,14 +31,14 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    // 3. Recurso não encontrado (JPA e Service)
+    // Recurso não encontrado (JPA e Service)
     @ExceptionHandler({EntityNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<StandardError> handleNotFound(Exception ex) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    // 4. Captura o que você usou nos Services: ResponseStatusException
+    // Captura o que você usou nos Services: ResponseStatusException
     @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
     public ResponseEntity<StandardError> handleResponseStatus(org.springframework.web.server.ResponseStatusException ex) {
         return buildResponse(HttpStatus.valueOf(ex.getStatusCode().value()), ex.getReason());
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
     }
 
-    // 6. Fallback para erros inesperados
+    // Fallback para erros inesperados
     @ExceptionHandler(Exception.class)
     public ResponseEntity<StandardError> handleGeneric(Exception ex) {
         // Logamos o erro completo no console para o desenvolvedor

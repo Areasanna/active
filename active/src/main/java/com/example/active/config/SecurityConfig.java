@@ -37,13 +37,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
 
                         // Consultas públicas
-                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/exercises/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users", "/muscles/**", "/equipments/**", "/exercises/**").permitAll()
 
                         // Apenas Admin
-                        .requestMatchers(HttpMethod.POST, "/exercises/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/exercises/**", "/equipments/**", "/muscles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/exercises/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/exercises/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/exercises/**", "/users/**").hasRole("ADMIN")
 
                         // Consultas e Edições com login
                         .requestMatchers("/workout-sessions/**").authenticated()
@@ -52,7 +51,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/exercises", "/training-plans/**", "/workout-sessions/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/exercises").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/exercises").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/exercises").authenticated()
                         .requestMatchers(HttpMethod.GET, "/workout-sessions/**", "/training-plans/**", "/exercises/{id}/personal-record/**").authenticated()
                         .anyRequest().authenticated()
                 )
