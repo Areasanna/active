@@ -93,11 +93,14 @@ public class WorkoutSessionService {
         Specification<WorkoutSession> userSpec = (root, query, builder) ->
                 builder.equal(root.get("user").get("id"), user.getId());
 
-        // União: (Filtro do Usuario) AND (Filtros da URL)
-        Page<WorkoutSession> page = workoutSessionRepository.findAll(
-                Specification.where(userSpec).and(spec),
-                pageable
-        );
+        // especificação com o filtro de segurança (que nunca é nulo)
+        Specification<WorkoutSession> finalSpec = Specification.where(userSpec);
+
+        if (spec != null) {
+            finalSpec = finalSpec.and(spec);
+        }
+
+        Page<WorkoutSession> page = workoutSessionRepository.findAll(finalSpec, pageable);
 
         if (page.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma sessão de treino encontrada.");
