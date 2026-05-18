@@ -3,9 +3,10 @@ package com.example.active.user.dto;
 import com.example.active.user.model.Role;
 import com.example.active.user.model.TrainingLevel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 public record UserResponse(
         Long id,
         String name,

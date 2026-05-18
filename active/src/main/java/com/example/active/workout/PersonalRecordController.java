@@ -1,6 +1,6 @@
 package com.example.active.workout;
 
-import com.example.active.training.dto.PersonalRecordResponse;
+import com.example.active.workout.dto.PersonalRecordResponse;
 import com.example.active.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

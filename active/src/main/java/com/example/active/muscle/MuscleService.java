@@ -34,7 +34,8 @@ public class MuscleService {
                 .name(request.name())
                 .nameEn(request.nameEn())
                 .build();
-        repository.save(muscle);
+
+        var savedMuscle = repository.save(muscle);
         return new MuscleResponse(muscle.getId(), muscle.getName(), muscle.getNameEn());
     }
 
