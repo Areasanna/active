@@ -1,4 +1,4 @@
-package com.example.active.training.dto;
+package com.example.active.workout.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
