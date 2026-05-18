@@ -1,7 +1,7 @@
 package com.example.active.workout;
 
 import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.training.dto.PersonalRecordResponse;
+import com.example.active.workout.dto.PersonalRecordResponse;
 import com.example.active.workout.repository.WorkoutSessionRepository;
 import com.example.active.workout.repository.WorkoutSetRepository;
 import jakarta.persistence.EntityNotFoundException;
