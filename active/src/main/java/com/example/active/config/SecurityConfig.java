@@ -1,6 +1,6 @@
 package com.example.active.config;
 
-import com.example.active.auth.AuthFilter;
+import com.example.active.model.AuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

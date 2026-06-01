@@ -1,11 +1,14 @@
 package com.example.active.training;
 
-import com.example.active.exercise.model.Exercise;
-import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.training.dto.*;
-import com.example.active.training.model.*;
-import com.example.active.training.repository.TrainingPlanRepository;
-import com.example.active.user.model.User;
+import com.example.active.dto.*;
+import com.example.active.model.Exercise;
+import com.example.active.model.SplitFocus;
+import com.example.active.model.TrainingGoal;
+import com.example.active.model.TrainingPlan;
+import com.example.active.repository.ExerciseRepository;
+import com.example.active.service.TrainingPlanService;
+import com.example.active.repository.TrainingPlanRepository;
+import com.example.active.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

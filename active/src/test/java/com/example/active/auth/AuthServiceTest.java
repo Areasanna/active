@@ -1,9 +1,10 @@
 package com.example.active.auth;
 
 import com.example.active.config.TokenUtil;
-import com.example.active.user.dto.LoginRequest;
-import com.example.active.user.dto.LoginResponse;
-import com.example.active.user.model.User;
+import com.example.active.service.AuthService;
+import com.example.active.dto.LoginRequest;
+import com.example.active.dto.LoginResponse;
+import com.example.active.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

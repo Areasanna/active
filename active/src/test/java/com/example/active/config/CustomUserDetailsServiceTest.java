@@ -1,7 +1,8 @@
 package com.example.active.config;
 
-import com.example.active.user.model.User;
-import com.example.active.user.repository.UserRepository;
+import com.example.active.service.CustomUserDetailsService;
+import com.example.active.model.User;
+import com.example.active.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

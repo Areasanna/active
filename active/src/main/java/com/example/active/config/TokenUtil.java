@@ -1,6 +1,6 @@
 package com.example.active.config;
 
-import com.example.active.user.model.User;
+import com.example.active.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

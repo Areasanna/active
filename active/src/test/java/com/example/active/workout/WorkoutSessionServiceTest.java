@@ -1,14 +1,15 @@
 package com.example.active.workout;
 
-import com.example.active.exercise.model.Exercise;
-import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.training.model.TrainingPlanDay;
-import com.example.active.training.repository.TrainingPlanDayRepository;
-import com.example.active.user.model.User;
-import com.example.active.workout.dto.WorkoutSessionCreateRequest;
-import com.example.active.workout.dto.WorkoutSessionCreateResponse;
-import com.example.active.workout.model.WorkoutSession;
-import com.example.active.workout.repository.WorkoutSessionRepository;
+import com.example.active.model.Exercise;
+import com.example.active.repository.ExerciseRepository;
+import com.example.active.service.WorkoutSessionService;
+import com.example.active.model.TrainingPlanDay;
+import com.example.active.repository.TrainingPlanDayRepository;
+import com.example.active.model.User;
+import com.example.active.dto.WorkoutSessionCreateRequest;
+import com.example.active.dto.WorkoutSessionCreateResponse;
+import com.example.active.model.WorkoutSession;
+import com.example.active.repository.WorkoutSessionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
