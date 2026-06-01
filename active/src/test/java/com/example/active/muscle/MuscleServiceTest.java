@@ -1,18 +1,16 @@
 package com.example.active.muscle;
 
-import com.example.active.muscle.dto.MuscleRequest;
-import com.example.active.muscle.dto.MuscleResponse;
-import com.example.active.muscle.model.Muscle;
-import com.example.active.muscle.repository.MuscleRepository;
+import com.example.active.dto.MuscleRequest;
+import com.example.active.dto.MuscleResponse;
+import com.example.active.model.Muscle;
+import com.example.active.repository.MuscleRepository;
+import com.example.active.service.MuscleService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,8 +19,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,9 +1,10 @@
 package com.example.active.equipment;
 
-import com.example.active.equipment.dto.EquipmentRequest;
-import com.example.active.equipment.dto.EquipmentResponse;
-import com.example.active.equipment.model.Equipment;
-import com.example.active.equipment.repository.EquipmentRepository;
+import com.example.active.dto.EquipmentRequest;
+import com.example.active.dto.EquipmentResponse;
+import com.example.active.model.Equipment;
+import com.example.active.repository.EquipmentRepository;
+import com.example.active.service.EquipmentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

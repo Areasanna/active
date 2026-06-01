@@ -1,10 +1,11 @@
 package com.example.active.workout;
 
-import com.example.active.exercise.model.Exercise;
-import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.workout.dto.PersonalRecordResponse;
-import com.example.active.workout.repository.WorkoutSessionRepository;
-import com.example.active.workout.repository.WorkoutSetRepository;
+import com.example.active.model.Exercise;
+import com.example.active.repository.ExerciseRepository;
+import com.example.active.service.PersonalRecordService;
+import com.example.active.dto.PersonalRecordResponse;
+import com.example.active.repository.WorkoutSessionRepository;
+import com.example.active.repository.WorkoutSetRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

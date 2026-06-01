@@ -1,16 +1,16 @@
 package com.example.active.exercise;
 
-import com.example.active.equipment.dto.EquipmentResponse;
-import com.example.active.equipment.model.Equipment;
-import com.example.active.equipment.repository.EquipmentRepository;
-import com.example.active.exercise.dto.ExerciseCreateRequest;
-import com.example.active.exercise.dto.ExerciseResponse;
-import com.example.active.exercise.dto.ExerciseUpdateRequest;
-import com.example.active.exercise.model.Exercise;
-import com.example.active.exercise.model.ExerciseCategory;
-import com.example.active.exercise.repository.ExerciseRepository;
-import com.example.active.muscle.model.Muscle;
-import com.example.active.muscle.repository.MuscleRepository;
+import com.example.active.model.Equipment;
+import com.example.active.repository.EquipmentRepository;
+import com.example.active.dto.ExerciseCreateRequest;
+import com.example.active.model.ExerciseResponse;
+import com.example.active.dto.ExerciseUpdateRequest;
+import com.example.active.model.Exercise;
+import com.example.active.model.ExerciseCategory;
+import com.example.active.repository.ExerciseRepository;
+import com.example.active.model.Muscle;
+import com.example.active.repository.MuscleRepository;
+import com.example.active.service.ExerciseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

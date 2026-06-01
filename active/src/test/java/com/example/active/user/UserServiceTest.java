@@ -1,10 +1,11 @@
 package com.example.active.user;
 
 import com.example.active.exception.EmailCadastrado;
-import com.example.active.user.dto.UserRequest;
-import com.example.active.user.dto.UserResponse;
-import com.example.active.user.model.User;
-import com.example.active.user.repository.UserRepository;
+import com.example.active.service.UserService;
+import com.example.active.dto.UserRequest;
+import com.example.active.dto.UserResponse;
+import com.example.active.model.User;
+import com.example.active.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
