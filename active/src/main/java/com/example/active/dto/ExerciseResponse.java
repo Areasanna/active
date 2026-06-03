@@ -1,7 +1,6 @@
-package com.example.active.model;
+package com.example.active.dto;
 
-import com.example.active.dto.EquipmentResponse;
-import com.example.active.dto.MuscleResponse;
+import com.example.active.model.ExerciseCategory;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package com.example.active.exercise;
 import com.example.active.model.Equipment;
 import com.example.active.repository.EquipmentRepository;
 import com.example.active.dto.ExerciseCreateRequest;
-import com.example.active.model.ExerciseResponse;
+import com.example.active.dto.ExerciseResponse;
 import com.example.active.dto.ExerciseUpdateRequest;
 import com.example.active.model.Exercise;
 import com.example.active.model.ExerciseCategory;
