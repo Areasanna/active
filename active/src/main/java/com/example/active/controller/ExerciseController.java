@@ -2,7 +2,7 @@ package com.example.active.controller;
 
 import com.example.active.service.ExerciseService;
 import com.example.active.dto.ExerciseCreateRequest;
-import com.example.active.model.ExerciseResponse;
+import com.example.active.dto.ExerciseResponse;
 import com.example.active.dto.ExerciseUpdateRequest;
 import com.example.active.model.Exercise;
 import io.swagger.v3.oas.annotations.Parameter;
