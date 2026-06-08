@@ -12,7 +12,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,8 +45,12 @@ public class User implements UserDetails {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Transient //Não cria uma coluna age no banco de dados
     private Integer age;
+
+    @Column(nullable = false)
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dateOfBirth;
 
     //Usuario informar o seu peso até 5 dígitos, sendo 2 após a vírgula
     @Column(nullable = false, precision = 5, scale = 2)
@@ -57,6 +63,12 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    //Atualiza a data de nascimento para a idade
+    public Integer getAge(){
+        if(this.dateOfBirth==null)return 0;
+        return Period.between(this.dateOfBirth, LocalDate.now()).getYears();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

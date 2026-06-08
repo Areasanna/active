@@ -46,9 +46,14 @@ public class UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setHeight(request.getHeight());
-        user.setAge(request.getAge());
         user.setWeight(request.getWeight());
         user.setTrainingLevel(request.getTrainingLevel());
+
+        user.setDateOfBirth(request.getDateOfBirth());
+
+        if(user.getAge() < 14){
+            throw new IllegalArgumentException("Cadastro rejeitado: para fazer o cadastro o usuário tem que ter no mínimo 14 anos");
+        }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userRepository.save(user);
@@ -79,10 +84,12 @@ public class UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setHeight(request.getHeight());
-        user.setAge(request.getAge());
         user.setWeight(request.getWeight());
         user.setTrainingLevel(request.getTrainingLevel());
 
+        if(user.getAge() < 14){
+            throw new IllegalArgumentException("Atualização não concluída: O usuário tem que ter no mínimo 14 anos");
+        }
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             if (!request.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d).{8,}$")) {
                 throw new RuntimeException("Senha deve conter letras e números e no mínimo 8 caracteres");
