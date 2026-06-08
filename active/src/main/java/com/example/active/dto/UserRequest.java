@@ -2,6 +2,7 @@ package com.example.active.dto;
 
 import com.example.active.model.Role;
 import com.example.active.model.TrainingLevel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +10,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequest {
+
     @NotBlank(message = "O nome é obrigatório")
     @Size(min = 2, max = 100)
     private String name;
@@ -29,12 +32,13 @@ public class UserRequest {
             message = "A senha deve ter letras e números")
     private String password;
 
+    @NotNull(message = "A data de nascimento é obrigatória")
+    @Past(message = "A data de nascimento tem que ser passada/verdadeira")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dateOfBirth;
+
     @NotNull(message = "O nível de treino é obrigatório")
     private TrainingLevel trainingLevel;
-
-    @NotNull(message = "A idade é obrigatória")
-    @Min(value = 14, message = "Idade mínima permitida é 14 anos")
-    private Integer age;
 
     @NotNull(message = "O peso é obrigatório")
     @Digits(integer = 3, fraction = 2)
